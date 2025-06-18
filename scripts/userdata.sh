@@ -16,8 +16,8 @@ unzip /tmp/awscliv2.zip -d /tmp
 /tmp/aws/install
 
 # Log in to ECR
-aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 571600835023.dkr.ecr.us-east-1.amazonaws.com
+aws ecr get-login-password --region ${aws_region} | docker login --username AWS --password-stdin ${ecr_registry}
 
 # Pull and run your Flask app image
-docker pull 571600835023.dkr.ecr.us-east-1.amazonaws.com/flask-webapp:latest
-docker run --name flask-webapp -d -p 5000:5000 571600835023.dkr.ecr.us-east-1.amazonaws.com/flask-webapp:latest
+docker pull ${ecr_registry}/${ecr_repo}:${docker_image_tag}
+docker run --name flask-webapp -d -p 5000:5000 ${ecr_registry}/${ecr_repo}:${docker_image_tag}

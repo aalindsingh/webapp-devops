@@ -32,3 +32,13 @@ jobs:
         run: |
           IMAGE_TAG=${{ github.sha }}
           docker push ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
+      
+      - name: Commit updated image tag to Terraform tfvars
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          echo "{\"docker_image_tag\": \"${IMAGE_TAG}\"}" > terraform/dev/docker.auto.tfvars.json
+          git config user.name "aalindsingh"
+          git config user.email "aalindsingh@gmail.com"
+          git add terraform/dev/docker.auto.tfvars.json
+          git commit -m "Update image tag to ${IMAGE_TAG}" || echo "No changes to commit"
+          git push    

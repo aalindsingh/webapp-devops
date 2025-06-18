@@ -12,6 +12,15 @@ resource "aws_autoscaling_group" "flaskapp_asg" {
     version = "$Latest"
   }
 
+  instance_refresh {
+    strategy = "Rolling"
+
+    preferences {
+      min_healthy_percentage = 90
+      instance_warmup        = 120
+    }
+  }
+
   tag {
     key                 = "Name"
     value               = "Flaskapp-ASG-${var.environment}"

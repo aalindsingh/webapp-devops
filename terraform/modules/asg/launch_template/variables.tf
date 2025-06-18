@@ -5,3 +5,7 @@ variable "environment" {}
 variable "cidr_block" {}
 variable "vpc_id" {}
 variable "alb_sg_id" {}
+variable "docker_image_tag" {}
+variable "ecr_repo" {}
+variable "ecr_registry" {}
+variable "aws_region" {}

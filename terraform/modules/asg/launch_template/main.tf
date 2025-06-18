@@ -66,7 +66,12 @@ resource "aws_launch_template" "flaskapp_server_lt" {
     name = aws_iam_instance_profile.flaskapp_profile.name
   }
 
-  user_data = base64encode(file("${path.module}/../../../../scripts/userdata.sh"))
+  user_data = base64encode(templatefile("${path.module}/../../../../scripts/userdata.sh", {
+    ecr_repo        = var.ecr_repo
+    ecr_registry    = var.ecr_registry
+    docker_image_tag      = var.docker_image_tag
+    aws_region      = var.aws_region
+  }))
 
   vpc_security_group_ids = [aws_security_group.flaskapp-sg.id]
 

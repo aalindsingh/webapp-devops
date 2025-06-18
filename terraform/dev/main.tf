@@ -23,14 +23,18 @@ module "alb" {
 }
 
 module "launch_template" {
-  source        = "../modules/asg/launch_template"
-  ami_id        = "ami-020cba7c55df1f615"
-  vpc_id        = module.networking.vpc_id
-  instance_type = "t2.micro"
-  key_name      = "flaskapp-devops-key"
-  environment   = "dev"
-  cidr_block    = "0.0.0.0/0"
-  alb_sg_id     = module.alb.alb_sg_id
+  source           = "../modules/asg/launch_template"
+  ami_id           = "ami-020cba7c55df1f615"
+  vpc_id           = module.networking.vpc_id
+  instance_type    = "t2.micro"
+  key_name         = "flaskapp-devops-key"
+  environment      = "dev"
+  cidr_block       = "0.0.0.0/0"
+  alb_sg_id        = module.alb.alb_sg_id
+  docker_image_tag = var.docker_image_tag
+  ecr_repo         = "flask-webapp"
+  ecr_registry     = module.ecr.repository_url
+  aws_region       = "us-east-1"
 }
 
 module "autoscaling" {
