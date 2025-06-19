@@ -1,28 +1,3 @@
-resource "aws_iam_role" "devops_admin_role" {
-  name = "devops_admin_role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Principal = {
-        Service = "ec2.amazonaws.com"
-      }
-      Action = "sts:AssumeRole"
-    }]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "attach_ecr_policy" {
-  role       = aws_iam_role.devops_admin_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-}
-
-resource "aws_iam_instance_profile" "flaskapp_profile" {
-  name = "flaskapp_profile"
-  role = aws_iam_role.devops_admin_role.name
-}
-
 resource "aws_security_group" "flaskapp-sg" {
   name = "flaskapp-sg"
   description = "Allow HTTP and SSH"
@@ -63,14 +38,14 @@ resource "aws_launch_template" "flaskapp_server_lt" {
   key_name      = var.key_name
 
   iam_instance_profile {
-    name = aws_iam_instance_profile.flaskapp_profile.name
+    name = var.iam_instance_profile_name
   }
 
   user_data = base64encode(templatefile("${path.module}/../../../../scripts/userdata.sh", {
-    ecr_repo        = var.ecr_repo
     ecr_registry    = var.ecr_registry
     docker_image_tag      = var.docker_image_tag
     aws_region      = var.aws_region
+    registry_domain = split("/", var.ecr_registry)[0]
   }))
 
   vpc_security_group_ids = [aws_security_group.flaskapp-sg.id]

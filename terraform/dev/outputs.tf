@@ -1,8 +1,3 @@
-output "repository_url" {
-  value       = module.ecr.repository_url
-  description = "The URL of the ECR repository"
-}
-
 output "vpc_id" {
   value       = module.networking.vpc_id
   description = "The ID of the VPC"
