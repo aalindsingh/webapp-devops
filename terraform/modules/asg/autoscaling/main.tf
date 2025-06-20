@@ -6,6 +6,7 @@ resource "aws_autoscaling_group" "flaskapp_asg" {
   target_group_arns      = [var.target_group_arn]
   health_check_type      = "EC2"
   health_check_grace_period = 120
+  name = "Flaskapp-ASG"
 
   launch_template {
     id      = var.launch_template_id
@@ -16,9 +17,11 @@ resource "aws_autoscaling_group" "flaskapp_asg" {
     strategy = "Rolling"
 
     preferences {
-      min_healthy_percentage = 90
+      min_healthy_percentage = 50
       instance_warmup        = 120
     }
+
+    triggers = ["launch_template"]
   }
 
   tag {
