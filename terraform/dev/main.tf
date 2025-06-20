@@ -32,12 +32,13 @@ module "launch_template" {
 }
 
 module "autoscaling" {
-  source             = "../modules/asg/autoscaling"
-  max_size           = 3
-  min_size           = 1
-  desired_capacity   = 2
-  subnet_ids         = module.networking.public_subnet_ids
-  launch_template_id = module.launch_template.launch_template_id
-  target_group_arn   = module.alb.target_group_arn
-  environment        = "dev"
+  source                  = "../modules/asg/autoscaling"
+  max_size                = 3
+  min_size                = 1
+  desired_capacity        = 2
+  subnet_ids              = module.networking.public_subnet_ids
+  launch_template_id      = module.launch_template.launch_template_id
+  target_group_arn        = module.alb.target_group_arn
+  environment             = "dev"
+  launch_template_version = module.launch_template.latest_version
 }

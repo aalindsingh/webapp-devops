@@ -10,7 +10,7 @@ resource "aws_autoscaling_group" "flaskapp_asg" {
 
   launch_template {
     id      = var.launch_template_id
-    version = "$Latest"
+    version = var.launch_template_version
   }
 
   instance_refresh {
@@ -18,10 +18,7 @@ resource "aws_autoscaling_group" "flaskapp_asg" {
 
     preferences {
       min_healthy_percentage = 50
-      instance_warmup        = 120
-    }
-
-    triggers = ["launch_template"]
+    }  
   }
 
   tag {

@@ -5,3 +5,4 @@ variable "subnet_ids" {}
 variable "target_group_arn" {}
 variable "launch_template_id" {}
 variable "environment" {}
+variable "launch_template_version" {}
