@@ -14,9 +14,48 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv
 unzip /tmp/awscliv2.zip -d /tmp
 /tmp/aws/install
 
+# Install CloudWatch Agent
+yum install -y amazon-cloudwatch-agent
+
+# Create config file
+cat <<EOF > /opt/aws/amazon-cloudwatch-agent/bin/config.json
+{
+  "metrics": {
+    "append_dimensions": {
+      "InstanceId": "$${aws:InstanceId}"
+    },
+    "metrics_collected": {
+      "cpu": {
+        "measurement": ["cpu_usage_idle", "cpu_usage_iowait"],
+        "metrics_collection_interval": 60
+      },
+      "disk": {
+        "measurement": ["used_percent"],
+        "metrics_collection_interval": 60,
+        "resources": ["*"]
+      },
+      "mem": {
+        "measurement": ["mem_used_percent"],
+        "metrics_collection_interval": 60
+      }
+    }
+  }
+}
+EOF
+
+# Start the agent
+/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+  -a fetch-config \
+  -m ec2 \
+  -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json \
+  -s
+
 # Log in to ECR
 aws ecr get-login-password --region ${aws_region} | docker login --username AWS --password-stdin ${registry_domain}
 
 # Pull and run your Flask app image
 docker pull ${ecr_registry}:${docker_image_tag}
-docker run --name flask-webapp -d -p 5000:5000 ${ecr_registry}:${docker_image_tag}
+docker run --log-driver=awslogs \
+  --log-opt awslogs-region=us-east-1 \
+  --log-opt awslogs-group=flask-app-logs \
+  --log-opt awslogs-stream=app --name flask-webapp -d -p 5000:5000 ${ecr_registry}:${docker_image_tag}
