@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Update and install required packages
-apt-get update -y
-apt-get install -y unzip curl
+apt update -y
+apt install -y unzip curl
 
 # Install Docker
-apt-get install -y docker.io
+apt install -y docker.io
 systemctl enable docker
 systemctl start docker
 
@@ -15,7 +15,7 @@ unzip /tmp/awscliv2.zip -d /tmp
 /tmp/aws/install
 
 # Install CloudWatch Agent
-yum install -y amazon-cloudwatch-agent
+apt install -y amazon-cloudwatch-agent
 
 # Create config file
 cat <<EOF > /opt/aws/amazon-cloudwatch-agent/bin/config.json
