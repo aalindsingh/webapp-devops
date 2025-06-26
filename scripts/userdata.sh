@@ -14,10 +14,12 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv
 unzip /tmp/awscliv2.zip -d /tmp
 /tmp/aws/install
 
-# Install CloudWatch Agent
-apt install -y amazon-cloudwatch-agent
+# Install CloudWatch Agent on Ubuntu
+wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb -O /tmp/amazon-cloudwatch-agent.deb
+dpkg -i /tmp/amazon-cloudwatch-agent.deb
 
 # Create config file
+mkdir -p /opt/aws/amazon-cloudwatch-agent/bin
 cat <<EOF > /opt/aws/amazon-cloudwatch-agent/bin/config.json
 {
   "metrics": {

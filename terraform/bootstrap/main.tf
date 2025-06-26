@@ -12,6 +12,11 @@ resource "aws_ecr_repository" "flaskapp_repo" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "flask_app_logs" {
+  name              = "flask-app-logs"
+  retention_in_days = 1
+}
+
 resource "aws_iam_role" "devops_admin_role" {
   name = "devops_admin_role"
 
