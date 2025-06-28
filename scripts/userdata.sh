@@ -18,17 +18,11 @@ unzip /tmp/awscliv2.zip -d /tmp
 wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb -O /tmp/amazon-cloudwatch-agent.deb
 dpkg -i /tmp/amazon-cloudwatch-agent.deb
 
-# Fetch Instance ID from the metadata service
-INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
-
 # Create config file
-mkdir -p /opt/aws/amazon-cloudwatch-agent/bin
-cat <<EOF > /opt/aws/amazon-cloudwatch-agent/bin/config.json
+mkdir -p /opt/aws/amazon-cloudwatch-agent/etc
+cat <<EOF > /opt/aws/amazon-cloudwatch-agent/etc/config.json
 {
   "metrics": {
-    "append_dimensions": {
-      "InstanceId": "$INSTANCE_ID"
-    },
     "metrics_collected": {
       "cpu": {
         "measurement": ["cpu_usage_idle", "cpu_usage_iowait"],
@@ -52,7 +46,7 @@ EOF
 /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
   -a fetch-config \
   -m ec2 \
-  -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json \
+  -c file:/opt/aws/amazon-cloudwatch-agent/etc/config.json \
   -s
 systemctl enable amazon-cloudwatch-agent
 
